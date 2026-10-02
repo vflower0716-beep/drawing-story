@@ -1,0 +1,97 @@
+<!doctype html><html lang="ja"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>このあと、どうなる？</title>
+<style>
+:root{--bg:#f2f4f7;--fg:#1b2430;--mut:#667385;--ac:#2f5d8a;--bd:#cfd6de}
+@media(prefers-color-scheme:dark){:root{--bg:#141a21;--fg:#e8edf2;--mut:#93a0b0;--ac:#7fb0e0;--bd:#2c3744}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.7 "Hiragino Sans","Noto Sans JP",system-ui,sans-serif}
+main{max-width:560px;margin:auto;padding:16px;padding-top:max(16px,env(safe-area-inset-top));padding-bottom:max(40px,env(safe-area-inset-bottom))}
+h1{font-size:1.5rem;line-height:1.3;letter-spacing:.02em}h2{font-size:1.15rem}
+button{font:inherit;padding:.65em 1.1em;border-radius:8px;border:1px solid var(--bd);background:transparent;color:var(--fg)}
+button.p{background:var(--ac);color:var(--bg);border-color:var(--ac)}button:disabled{opacity:.4}
+.m{color:var(--mut);font-size:.88rem}
+.box{border-left:3px solid var(--ac);padding:2px 12px;margin:14px 0}
+img,canvas{max-width:100%;display:block}
+#st{position:relative}#st canvas{width:100%;height:auto}#dr{position:absolute;inset:0;height:100%!important;touch-action:none}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:10px 0}
+.sw{width:32px;height:32px;border-radius:50%;border:2px solid var(--bd);padding:0}
+.sw.on{outline:3px solid var(--ac);outline-offset:1px}
+#tm{font-size:1.6rem;font-variant-numeric:tabular-nums}
+textarea,input[type=text]{width:100%;font:inherit;padding:8px;border-radius:8px;border:1px solid var(--bd);background:transparent;color:var(--fg)}
+.lk{display:flex;gap:6px}.lk input{flex:1}
+.tr{margin:12px 0 0 10px;border-left:2px solid var(--bd);padding-left:10px}
+.sc label{margin-right:12px;white-space:nowrap}
+</style></head><body><main id="app"></main>
+<script>
+// ▼ 設定：Supabaseの「Project URL」と「anon(publishable) key」だけを入れる。service_role/secret keyは絶対に入れない
+const SB_URL="",SB_KEY="",CONTACT="（連絡先を記入）",T=30000;
+const PAL=["#111111","#ffffff","#e63946","#f4a261","#ffd166","#2a9d8f","#457b9d","#8d5fd3"];
+const $=s=>document.querySelector(s),app=$("#app");
+const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+let pid;try{pid=localStorage.pid||(localStorage.pid=crypto.randomUUID())}catch{pid=crypto.randomUUID()}
+const H=()=>{const h={apikey:SB_KEY};if(SB_KEY.startsWith("eyJ"))h.Authorization="Bearer "+SB_KEY;return h};
+const pub=p=>`${SB_URL}/storage/v1/object/public/images/${p}`;
+async function up(p,b){const r=await fetch(`${SB_URL}/storage/v1/object/images/${p}`,{method:"POST",headers:{...H(),"Content-Type":b.type},body:b});if(!r.ok)throw Error("画像の保存に失敗("+r.status+")")}
+async function ins(t,row){const r=await fetch(`${SB_URL}/rest/v1/${t}`,{method:"POST",headers:{...H(),"Content-Type":"application/json",Prefer:"return=minimal"},body:JSON.stringify(row)});if(!r.ok)throw Error("記録に失敗("+r.status+")")}
+async function sel(q){const r=await fetch(`${SB_URL}/rest/v1/${q}`,{headers:H()});if(!r.ok)throw Error("読み込みに失敗("+r.status+")");return r.json()}
+const blob=(c,t,q)=>new Promise(r=>c.toBlob(r,t,q));
+const dev=()=>/Mobi|Android|iPhone/.test(navigator.userAgent)?"mobile":"pc";
+async function shrink(f){const b=await createImageBitmap(f,{imageOrientation:"from-image"}).catch(()=>createImageBitmap(f));const s=Math.min(1,1280/Math.max(b.width,b.height)),c=document.createElement("canvas");c.width=Math.round(b.width*s);c.height=Math.round(b.height*s);c.getContext("2d").drawImage(b,0,0,c.width,c.height);return blob(c,"image/jpeg",.85)} // 再エンコードでEXIF(位置情報)が消える
+const base=()=>location.href.split("#")[0];
+const share=(u,t)=>`<div class="box"><b>${t}</b><div class="lk"><input readonly value="${esc(u)}"><button onclick="navigator.clipboard.writeText(this.previousElementSibling.value).then(()=>this.textContent='コピーしました')">コピー</button></div></div>`;
+const sc=(k,t)=>`<p>${t}</p><div class="sc">${[1,2,3,4,5].map(i=>`<label><input type="radio" name="${k}" value="${i}"> ${i}</label>`).join("")}</div>`;
+const val=n=>{const e=document.querySelector(`input[name=${n}]:checked`);return e?e.value:null},num=n=>{const v=val(n);return v==null?null:+v};
+async function route(){const[,k,id]=location.hash.split("/");try{if(!SB_URL||!SB_KEY)throw Error("script内のSB_URLとSB_KEYを設定してください");k=="a"?await draw(id):k=="g"?await gal(id):start()}catch(e){app.innerHTML=`<h1>開けませんでした</h1><p class="m">${esc(e.message)}</p><p><a href="#/">最初の画面へ</a></p>`}}
+addEventListener("hashchange",route);route();
+
+function start(){app.innerHTML=`<h1>このあと、どうなる？</h1>
+<p>写真を1枚選ぶと、友人がその「次」を30秒で描き足します。描いた絵はまた別の人へ渡ります。卒業制作の体験実験です。</p>
+<div class="box"><b>写真の選び方</b><p>いつの写真でもOK。ちょっと気になって撮った1枚を。人の顔が写っていないもの、描き足されても大丈夫なものだと◎</p></div>
+<p class="m">・リンクを知っている人に、写真と描いた絵が見えます<br>・投稿された画像と回答は、卒業制作の記録・発表に使います<br>・位置情報は削除してから保存します<br>・削除したいときは ${esc(CONTACT)} へ</p>
+<input type="file" id="f" accept="image/*" hidden><button class="p" id="b">同意して写真を選ぶ</button><p id="s" class="m"></p>`;
+$("#b").onclick=()=>$("#f").click();
+$("#f").onchange=async e=>{const f=e.target.files[0];if(!f)return;$("#s").textContent="アップロード中…";try{const id=crypto.randomUUID(),p=`${id}/photo.jpg`;await up(p,await shrink(f));await ins("artworks",{artwork_id:id,parent_id:null,root_id:id,participant_id:pid,generation:0,original_image_path:p,artwork_image_path:p,device:dev()});
+app.innerHTML=`<h1>できました</h1><p>このリンクを描いてほしい人に送ってください。同じリンクを複数の人に送ると、続きが枝分かれします。</p>${share(base()+"#/a/"+id,"描いてもらうリンク")}<p><a href="#/g/${id}">みんなの作品を見る</a></p>`}catch(x){$("#s").textContent="失敗しました："+x.message}}}
+
+async function draw(id){const[a]=await sel(`artworks?artwork_id=eq.${id}&select=*`);if(!a)throw Error("この作品は見つかりません");
+const img=new Image();img.crossOrigin="anonymous";await new Promise((r,j)=>{img.onload=r;img.onerror=()=>j(Error("画像を読み込めません"));img.src=pub(a.artwork_image_path)});
+app.innerHTML=`<h2>この写真の「次」を描いてください</h2><p class="m">${a.generation?"前の人が描いた絵の続きです。":""}30秒。上手に描く必要はありません。</p>
+<div id="st"><canvas id="bs"></canvas><canvas id="dr"></canvas></div>
+<div id="ct"><button class="p" id="go">同意してスタート（30秒）</button><p class="m">スタートを押すとタイマーが動きます。描いた絵と記録は卒業制作に使われます。</p></div>`;
+const bs=$("#bs"),dr=$("#dr");bs.width=dr.width=img.naturalWidth;bs.height=dr.height=img.naturalHeight;bs.getContext("2d").drawImage(img,0,0);
+const x=dr.getContext("2d");let S=[],cur=null,run=false,t0=0,col=PAL[0],sz=8,er=false,dt=0,iv;
+const paint=()=>{x.clearRect(0,0,dr.width,dr.height);for(const s of S){x.globalCompositeOperation=s.e?"destination-out":"source-over";x.strokeStyle=s.c;x.lineWidth=s.w;x.lineCap=x.lineJoin="round";x.beginPath();s.p.forEach(([a,b],i)=>i?x.lineTo(a,b):x.moveTo(a,b));if(s.p.length<2)x.lineTo(s.p[0][0]+.1,s.p[0][1]);x.stroke()}};
+const pt=e=>{const r=dr.getBoundingClientRect();return[Math.round((e.clientX-r.left)*dr.width/r.width),Math.round((e.clientY-r.top)*dr.height/r.height),Math.round(performance.now()-t0)]};
+dr.onpointerdown=e=>{if(!run)return;dr.setPointerCapture(e.pointerId);cur={c:col,w:Math.round(sz*dr.width/600),e:er,p:[pt(e)]};S.push(cur);paint()};
+dr.onpointermove=e=>{if(cur){cur.p.push(pt(e));paint()}};dr.onpointerup=dr.onpointercancel=()=>cur=null;
+$("#go").onclick=()=>{run=true;t0=performance.now();$("#ct").innerHTML=`<div class="row"><span id="tm">30</span><button class="p" id="fin" style="margin-left:auto">完成</button></div>
+<div class="row" id="pl">${PAL.map(c=>`<button class="sw${c==col?" on":""}" style="background:${c}" data-c="${c}"></button>`).join("")}<input type="color" id="cc" value="#ff69b4" title="その他の色"></div>
+<div class="row"><button id="pen" class="p">ペン</button><button id="era">消しゴム</button><button id="und">Undo</button><input type="range" id="sz" min="2" max="40" value="8"></div>`;
+$("#pl").onclick=e=>{const c=e.target.dataset?.c;if(c)pick(c)};$("#cc").oninput=e=>pick(e.target.value);
+const pick=c=>{col=c;er=false;$("#pen").className="p";$("#era").className="";document.querySelectorAll(".sw").forEach(b=>b.classList.toggle("on",b.dataset.c==c))};
+$("#pen").onclick=()=>{er=false;$("#pen").className="p";$("#era").className=""};$("#era").onclick=()=>{er=true;$("#era").className="p";$("#pen").className=""};
+$("#und").onclick=()=>{S.pop();paint()};$("#sz").oninput=e=>sz=+e.target.value;$("#fin").onclick=fin;
+iv=setInterval(()=>{const l=T-(performance.now()-t0);$("#tm").textContent=Math.max(0,Math.ceil(l/1000));if(l<=0)fin()},100)};
+function fin(){if(!run)return;run=false;cur=null;clearInterval(iv);dt=Math.min(T,Math.round(performance.now()-t0));
+$("#ct").innerHTML=`<p><b>描き終わりました</b></p><p>これは何のつもり？（任意。次の人には見えず、最後の一覧で公開されます）</p><textarea id="nt" rows="2" maxlength="200"></textarea><div class="row"><button class="p" id="sv">保存して次へ</button><span id="er" class="m"></span></div>`;
+$("#sv").onclick=async()=>{$("#sv").disabled=true;$("#er").textContent="保存中…";try{const n=crypto.randomUUID(),pa=`${a.root_id}/${n}.jpg`,pl=`${a.root_id}/${n}_layer.png`,c=document.createElement("canvas");c.width=bs.width;c.height=bs.height;const g=c.getContext("2d");g.drawImage(bs,0,0);g.drawImage(dr,0,0);
+await up(pa,await blob(c,"image/jpeg",.85));await up(pl,await blob(dr,"image/png"));
+await ins("artworks",{artwork_id:n,parent_id:id,root_id:a.root_id,participant_id:pid,generation:a.generation+1,original_image_path:a.original_image_path,artwork_image_path:pa,layer_image_path:pl,strokes:S,drawing_time:dt,note:$("#nt").value.trim()||null,device:dev()});done(n,a)}catch(e){$("#sv").disabled=false;$("#er").textContent=e.message}}}}
+
+function done(n,a){app.innerHTML=`<h1>ありがとうございました</h1>${share(base()+"#/a/"+n,"この絵の続きを描いてもらうリンク")}
+<h2>少しだけ教えてください</h2><p class="m">1＝まったくそう思わない　5＝とてもそう思う</p>
+<p>普段、絵を描きますか？</p><div class="sc">${["よく描く","たまに描く","ほとんど描かない"].map(v=>`<label><input type="radio" name="hb" value="${v}"> ${v}</label>`).join("")}</div>
+${sc("q1","楽しかった")}${sc("q2","絵を描くことに抵抗があった")}${a.generation>=1?sc("q3","前の人がなぜこう描いたのか気になった"):""}
+<p>30秒は？</p><div class="sc">${["短い","ちょうどいい","長い"].map(v=>`<label><input type="radio" name="tf" value="${v}"> ${v}</label>`).join("")}</div>
+<div class="row"><button class="p" id="s1">送信</button></div>`;
+$("#s1").onclick=async()=>{try{await ins("surveys",{artwork_id:n,participant_id:pid,stage:1,habit:val("hb"),time_feel:val("tf"),q1:num("q1"),q2:num("q2"),q3:num("q3")});app.innerHTML=`<h1>送信しました</h1><p><a href="#/g/${a.root_id}">ほかの人の続きを見る</a></p>`}catch(e){alert(e.message)}}}
+
+async function gal(id){const L=await sel(`artworks?root_id=eq.${id}&select=artwork_id,parent_id,generation,artwork_image_path,drawing_time,note,participant_id&order=created_at`);if(!L.length)throw Error("見つかりません");
+const kids=p=>L.filter(a=>a.parent_id===p);
+const node=a=>`<div class="tr"><img src="${pub(a.artwork_image_path)}" loading="lazy"><div class="m">${a.generation?a.generation+"人目":"元の写真"}${a.drawing_time?"・"+Math.round(a.drawing_time/1000)+"秒":""} <a href="#/a/${a.artwork_id}">ここから続きを描く</a></div>${a.note?`<p class="m">描いた人のひとこと：${esc(a.note)}</p>`:""}${kids(a.artwork_id).map(node).join("")}</div>`;
+const mine=L.filter(a=>a.participant_id==pid).pop();
+app.innerHTML=`<h1>同じ写真から生まれた世界</h1>${L.length<2?'<p class="m">まだ続きを描いた人はいません。</p>':""}${node(L.find(a=>!a.parent_id))}
+${mine?`<h2>見てみて、どうでしたか？</h2><p class="m">1＝まったくそう思わない　5＝とてもそう思う</p>${sc("q4","自分と他の人の表現の違いが面白かった")}${sc("q5","相手に「なぜこう描いたの？」と聞いてみたいと思った")}${sc("q6","またやってみたい")}<p>自由に書いてください（任意）</p><textarea id="ft" rows="3"></textarea><div class="row"><button class="p" id="s2">送信</button></div>`:""}`;
+if(mine)$("#s2").onclick=async()=>{try{await ins("surveys",{artwork_id:mine.artwork_id,participant_id:pid,stage:2,q4:num("q4"),q5:num("q5"),q6:num("q6"),free_text:$("#ft").value.trim()||null});$("#s2").textContent="送信しました";$("#s2").disabled=true}catch(e){alert(e.message)}}}
+</script></body></html>
