@@ -1,0 +1,222 @@
+<!doctype html><html lang="ja"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<title>ミカタス</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@500;700;900&family=Dela+Gothic+One&display=swap');
+:root{--bg:#FAF6EE;--fg:#2B2B2B;--mut:#555;--bl:#3D6FE0;--cr:#FF6B4A}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.7 "Zen Maru Gothic","Hiragino Maru Gothic ProN","Hiragino Sans","Noto Sans JP",system-ui,sans-serif;overscroll-behavior:none;-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent;-webkit-touch-callout:none}
+input,textarea{-webkit-user-select:text;user-select:text}
+header.top{display:flex;align-items:center;padding:8px 16px;border-bottom:2px solid var(--fg)}
+header.top a{display:flex;align-items:center;gap:10px;color:var(--fg);text-decoration:none}
+.wm{font-family:"Dela Gothic One",sans-serif;font-size:22px}
+main{max-width:1100px;margin:auto;padding:16px 16px 56px}
+h1{font-size:1.6rem;line-height:1.35;margin:.5em 0 .4em}h2{font-size:1.2rem;line-height:1.4;margin:.3em 0}
+a{color:#2F5CC4}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:52px;padding:.4em 1.4em;font:inherit;font-weight:700;border:2px solid var(--fg);border-radius:14px;background:#fff;color:var(--fg);cursor:pointer;text-decoration:none}
+.btn.p{background:var(--bl);border-color:var(--bl);color:#fff}
+.btn.big{min-height:72px;font-size:1.4rem;padding:.4em 2.2em}
+.btn:disabled{opacity:.35}
+.card{background:#fff;border:2px solid var(--fg);border-radius:14px;padding:14px 16px;margin:12px 0}
+.m{color:var(--mut);font-size:.9rem}
+.big{font-size:1.25rem;font-weight:700;margin:.3em 0}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}
+.chip{font:inherit;font-weight:700;min-height:48px;padding:.3em 1.1em;border:2px solid var(--fg);border-radius:24px;background:#fff;color:var(--fg);cursor:pointer}
+.chip.on{background:var(--fg);color:#fff}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:10px 0}
+.two{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px}
+.slot img,.pv img{max-width:100%;max-height:240px;display:block;margin:8px 0;border:1px solid var(--fg)}
+.code{font-family:"Dela Gothic One",sans-serif;font-size:5rem;letter-spacing:.12em;line-height:1.2}
+input[type=text],input[type=tel],input:not([type]),textarea{font:inherit;padding:10px 12px;border:2px solid var(--fg);border-radius:12px;background:#fff;color:var(--fg);min-height:52px}
+input.code4{width:7.5em;font-size:1.6rem;letter-spacing:.2em;text-align:center}
+#ti{width:100%;font-size:1.3rem}
+.dw{display:grid;grid-template-columns:1fr;gap:12px;align-items:start}
+@media (orientation:landscape) and (min-width:860px){.dw{grid-template-columns:minmax(0,1fr) 270px}}
+.stc{display:flex;justify-content:center}
+#st{position:relative;overflow:hidden;touch-action:none;border:2px solid var(--fg);width:min(100%,calc((100vh - 130px)*var(--ar)));background:#fff}
+#zm{transform-origin:0 0;width:100%}
+#zm canvas{display:block;width:100%;height:auto}
+#zm canvas#dr{position:absolute;left:0;top:0;width:100%;height:100%}
+#ov{position:absolute;inset:0;background:rgba(250,246,238,.82);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;text-align:center;padding:16px}
+#ov .cd{font-family:"Dela Gothic One",sans-serif;font-size:7rem;line-height:1}
+#tm{font-size:2.4rem;font-weight:900;font-variant-numeric:tabular-nums;min-width:2.5ch}
+.sw{width:46px;height:46px;border-radius:50%;border:3px solid var(--fg);padding:0;cursor:pointer}
+.sw.on{outline:4px solid var(--fg);outline-offset:2px}
+.szb{width:58px;height:58px;padding:0;display:inline-flex;align-items:center;justify-content:center;border:2px solid var(--fg);border-radius:14px;background:#fff;cursor:pointer}
+.szb.on{background:var(--fg)}.szb i{display:block;border-radius:50%;background:var(--fg)}.szb.on i{background:#fff}
+.cmp{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px;margin:12px 0}
+.cmp figure{margin:0}.cmp img{width:100%;height:auto;display:block;border:2px solid var(--fg);background:#fff}.cmp figcaption{font-size:.95rem;color:var(--mut);font-weight:700}
+.ttl{font-size:1.6rem;font-weight:900;margin:.3em 0}
+.flip{display:block;width:100%;text-align:left;font:inherit;font-weight:900;font-size:1.3rem;padding:22px 20px;border:3px dashed var(--fg);border-radius:16px;background:#FFF4C8;cursor:pointer;color:var(--fg)}
+.pair{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px}.pair img{cursor:pointer}
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:10px 0}
+.steps .card{margin:0;padding:10px 12px}.steps b{display:block}
+.hero{display:grid;grid-template-columns:1fr;gap:20px;align-items:center}
+@media (orientation:landscape) and (min-width:860px){.hero{grid-template-columns:1.05fr 1fr}}
+.hv img{width:100%;display:block;border:2px solid var(--fg);border-radius:14px}
+.hv .fb{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+.hv .fb div{border:2px solid var(--fg);border-radius:12px;background:#fff;padding:8px;font-weight:900;text-align:center}
+.hv .fb svg{width:100%;height:auto;display:block;margin-bottom:4px}
+.kiosk header.top{display:none}.kiosk main{max-width:none;padding:24px 32px}
+.kiosk .ttl{font-size:2.2rem}.kiosk .cmp{grid-template-columns:repeat(2,1fr)}
+.fade{animation:f .6s}@keyframes f{from{opacity:0}to{opacity:1}}
+</style></head><body><header class="top"><a href="#/"><svg width="36" height="36" viewBox="0 0 220 220" aria-hidden="true"><g transform="translate(-13 -13)"><rect x="30" y="70" width="160" height="80" rx="40" fill="#FF6B4A"/><rect x="70" y="30" width="80" height="160" rx="40" fill="#FF6B4A"/></g><g transform="translate(13 13)"><rect x="30" y="70" width="160" height="80" rx="40" fill="#3D6FE0"/><rect x="70" y="30" width="80" height="160" rx="40" fill="#3D6FE0"/></g><rect x="30" y="70" width="160" height="80" rx="40" fill="#2B2B2B"/><rect x="70" y="30" width="80" height="160" rx="40" fill="#2B2B2B"/><rect x="97" y="97" width="11" height="24" rx="5.5" fill="#fff"/><rect x="113" y="97" width="11" height="24" rx="5.5" fill="#fff"/></svg><span class="wm">ミカタス</span></a></header><main id="app"></main>
+<script>
+// ▼ 設定：publishable key だけ。secret / service_role key は絶対に入れない
+const SB_URL="https://norxbcfnnqzfxklybyqd.supabase.co",SB_KEY="sb_publishable_rU-eJF597hbe4Kg1-9DC8w_XCuSURd0",CONTACT="削除のご希望は 23md049@st.nuas.ac.jp まで",VER="v3";
+const THEMES=[["food","食べ物","最近食べたものの中で、つい撮ってしまった1枚"],["place","場所","最近行った場所で、つい撮ってしまった1枚"],["view","風景","最近見かけた風景の中で、つい撮ってしまった1枚"],["any","なんでも","最近、つい撮ってしまった1枚（なんでも）"]];
+const TAGS=["きれいだった","おいしそう","おもしろい","かわいい","なんとなく","思い出"];
+const FITS=["ぴったり","ちょっとズレてた","ぜんぜん違った","ズレが面白い"];
+const PAL=["#3D6FE0","#FF6B4A","#2B2B2B","#FFFFFF","#FFD166","#2A9D8F","#8D5FD3","#E63946"];
+const SIZES=[4,9,20];
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)],app=$("#app");
+const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+let pid;try{pid=localStorage.pid||(localStorage.pid=crypto.randomUUID())}catch{pid=crypto.randomUUID()}
+const H=()=>{const h={apikey:SB_KEY};if(SB_KEY.startsWith("eyJ"))h.Authorization="Bearer "+SB_KEY;return h};
+const pub=p=>`${SB_URL}/storage/v1/object/public/images/${p}`;
+async function up(p,b){const r=await fetch(`${SB_URL}/storage/v1/object/images/${p}`,{method:"POST",headers:{...H(),"Content-Type":b.type},body:b});if(!r.ok)throw Error("画像の保存に失敗("+r.status+")")}
+async function ins(t,row){const r=await fetch(`${SB_URL}/rest/v1/${t}`,{method:"POST",headers:{...H(),"Content-Type":"application/json",Prefer:"return=minimal"},body:JSON.stringify(row)});if(!r.ok)throw Error("記録に失敗("+r.status+")")}
+async function sel(q){const r=await fetch(`${SB_URL}/rest/v1/${q}`,{headers:H()});if(!r.ok)throw Error("読み込みに失敗("+r.status+")");return r.json()}
+const blob=(c,t,q)=>new Promise(r=>c.toBlob(r,t,q));
+const dev=()=>/Mobi|Android|iPhone/.test(navigator.userAgent)?"mobile":"tablet_or_pc";
+async function shrink(f){const b=await createImageBitmap(f,{imageOrientation:"from-image"}).catch(()=>createImageBitmap(f));const s=Math.min(1,1280/Math.max(b.width,b.height)),c=document.createElement("canvas");c.width=Math.round(b.width*s);c.height=Math.round(b.height*s);c.getContext("2d").drawImage(b,0,0,c.width,c.height);return blob(c,"image/jpeg",.85)} // 再エンコードでEXIF(位置情報)が消える
+const since=()=>encodeURIComponent(new Date(Date.now()-3*3600e3).toISOString());
+const loadImg=u=>new Promise((r,j)=>{const i=new Image();i.crossOrigin="anonymous";i.onload=()=>r(i);i.onerror=()=>j(Error("画像を読み込めません"));i.src=u});
+let TMR=[];const later=(f,ms)=>{const t=setTimeout(f,ms);TMR.push(t);return t},every=(f,ms)=>{const t=setInterval(f,ms);TMR.push(t);return t},stopAll=()=>{TMR.forEach(t=>{clearTimeout(t);clearInterval(t)});TMR=[]};
+["gesturestart","gesturechange","gestureend"].forEach(n=>document.addEventListener(n,e=>e.preventDefault())); // iPadのページ拡大を止める
+
+// 写真の持ち主が書く「どうして撮った？」
+const whyBlock=()=>`<div class="card"><b>この写真、どうして撮った？</b><div class="m">相手には見せません。描き足したあとの「答え合わせ」で見せます。</div><div class="chips" id="wt">${TAGS.map(t=>`<button type="button" class="chip" data-t="${t}">${t}</button>`).join("")}</div><textarea id="wx" rows="2" maxlength="120" placeholder="ひとこと（任意）　例：夕焼けが急にきれいだった" style="width:100%"></textarea></div>`;
+const bindWhy=()=>$$("#wt .chip").forEach(b=>b.onclick=()=>b.classList.toggle("on"));
+const readWhy=()=>({tags:$$("#wt .chip.on").map(b=>b.dataset.t).join("、"),text:($("#wx").value||"").trim()});
+const whyOK=w=>w.tags||w.text;
+
+async function newPhoto(file,theme,why){const id=crypto.randomUUID(),p=`${id}/photo.jpg`;await up(p,await shrink(file));let code;
+for(let i=0;i<8;i++){code=String(Math.floor(Math.random()*10000)).padStart(4,"0");const ex=await sel(`artworks?code=eq.${code}&created_at=gte.${since()}&select=artwork_id&limit=1`);if(!ex.length)break}
+const row={artwork_id:id,parent_id:null,root_id:id,participant_id:pid,generation:0,original_image_path:p,artwork_image_path:p,device:dev(),code,theme,why_tags:why.tags||null,why_text:why.text||null,app_version:VER};
+await ins("artworks",row);return row}
+
+async function route(){stopAll();const k=location.hash.split("/")[1]||"";document.body.className=k=="show"?"kiosk":"";window.scrollTo(0,0);
+try{if(!SB_URL||!SB_KEY)throw Error("script内のSB_URLとSB_KEYを設定してください");await({send,play,log,show}[k]||home)()}
+catch(e){app.innerHTML=`<h1>開けませんでした</h1><p class="m">${esc(e.message)}</p><p><a href="#/">最初の画面へ</a></p>`}}
+addEventListener("hashchange",route);route();
+
+// ───────── 最初の画面 ─────────
+function fbk(i){const ph='<svg viewBox="0 0 120 84" aria-hidden="true"><rect width="120" height="84" fill="#E6EAF5"/><circle cx="92" cy="22" r="10" fill="#FFD166"/><path d="M0 84 L34 40 L60 66 L84 46 L120 84Z" fill="#9DB4E8"/>';
+i.outerHTML='<div class="fb"><div>'+ph+'</svg>写真</div><div>'+ph+'<circle cx="60" cy="40" r="22" fill="none" stroke="#FF6B4A" stroke-width="5"/></svg>描き足す</div><div><svg viewBox="0 0 120 84" aria-hidden="true"><rect width="120" height="84" fill="#FFF4C8"/><text x="60" y="52" text-anchor="middle" font-size="26" font-weight="900" fill="#2B2B2B">題</text></svg>題をつける</div></div>'}
+function home(){
+app.innerHTML=`<div class="hero"><div class="hv"><img src="mihon.png" alt="ミカタスの見本（写真、描き足した絵、題）" onerror="fbk(this)"></div>
+<div><h1 style="margin-top:0">ふたりのミカタを描きタス。</h1>
+<p style="font-size:1.1rem;margin:.2em 0 .6em">友だちが撮った写真の、気になったところに描き足す。見せ合うと、知らなかった見方が見えてくる。</p>
+<div class="steps"><div class="card"><b>1 写真を送る</b><span class="m">つい撮った1枚</span></div><div class="card"><b>2 描き足す</b><span class="m">相手の写真に</span></div><div class="card"><b>3 見せ合う</b><span class="m">見方のズレを話す</span></div></div>
+<div class="row"><a class="btn p big" href="#/play">はじめる</a></div><div class="row"><a class="btn" href="#/send">スマホから写真を送る</a><a class="btn" href="#/log">みんなのログを見る</a></div></div></div>
+<p class="m">写真・描いた絵・題は、卒業制作の記録として保存します（位置情報は削除）。${esc(CONTACT)}。</p>`}
+
+// ───────── スマホ：写真を送る ─────────
+function send(){let ti=Math.floor(Math.random()*3),file=null;
+app.innerHTML=`<h1>写真を送る</h1>
+<div class="card"><b>この写真に、友だちが絵を描き足します</b><p class="m" style="margin:4px 0">描き足したくなる写真がおすすめ（空・食べ物・動物・少し余白のあるもの）。ゲームの画面、他の人の作品、文字ばかりの画像は描きにくいかもしれません。</p></div>
+<div class="card"><div class="m">お題</div><p class="big" id="tp"></p><div class="chips" id="th"></div><p class="m">お題は目安です。変えても、なんでもOK。</p></div>
+<input type="file" id="f" accept="image/*" hidden><button class="btn" id="b">写真を選ぶ</button><div id="pv"></div>`;
+const th=()=>{$("#tp").textContent=THEMES[ti][2];$("#th").innerHTML=THEMES.map((x,i)=>`<button class="chip${i==ti?" on":""}" data-i="${i}">${x[1]}</button>`).join("");$$("#th .chip").forEach(b=>b.onclick=()=>{ti=+b.dataset.i;th()})};th();
+$("#b").onclick=()=>$("#f").click();
+$("#f").onchange=e=>{file=e.target.files[0];if(!file)return;$("#b").textContent="写真を選びなおす";
+$("#pv").innerHTML=`<div class="pv"><img src="${URL.createObjectURL(file)}" alt="選んだ写真"></div>${whyBlock()}<button class="btn p big" id="s" disabled>送る</button><p id="er" class="m"></p>`;bindWhy();
+const chk=()=>$("#s").disabled=!whyOK(readWhy());$$("#wt .chip").forEach(b=>b.addEventListener("click",chk));$("#wx").oninput=chk;
+$("#s").onclick=async()=>{$("#s").disabled=true;$("#s").textContent="送っています…";$("#er").textContent="";
+try{const r=await newPhoto(file,THEMES[ti][0],readWhy());app.innerHTML=`<h1>送れました</h1><div class="card" style="text-align:center"><div class="m">この番号を、展示のiPadに入力してください</div><div class="code">${r.code}</div><div class="m">3時間以内に使ってください</div></div><p><a class="btn" href="#/send">もう1枚送る</a></p>`}
+catch(x){$("#s").disabled=false;$("#s").textContent="送る";$("#er").textContent="失敗しました："+x.message}}}}
+
+// ───────── 展示iPad：相手の写真に描き足す ─────────
+function play(){const S={photo:null,limit:60000};setup();
+
+function setup(){stopAll();const hasP=!!S.photo;
+app.innerHTML=`<h1>相手の写真に、描き足します</h1><p class="m">友だちが送った写真を読み込んで、あなたが絵を描き足します。iPadが2台あるときは、ふたりが同時に始められます。</p>
+<div class="card slot">${hasP?`<b>読み込めました</b><img src="${pub(S.photo.artwork_image_path)}" alt="読み込んだ写真"><button class="btn" id="ch">ちがう写真にする</button>`:
+`<b>友だちがスマホで送った、4けたの番号</b><div class="row"><input class="code4" id="cc" type="tel" inputmode="numeric" maxlength="4" placeholder="1234" autocomplete="off"><span id="cm" class="m"></span></div>
+<p class="m" style="margin:2px 0">番号がないときは、AirDropなどで送った写真や、その場で撮った写真も使えます。</p>
+<input type="file" id="ff" accept="image/*" hidden><button class="btn" id="pk">この場で写真を選ぶ／撮る</button><div id="pw"></div>`}</div>
+<div class="card"><b>時間</b><div class="chips">${[[30000,"30秒"],[60000,"60秒（おすすめ）"],[0,"無制限"]].map(([v,l])=>`<button class="chip${S.limit===v?" on":""}" data-l="${v}">${l}</button>`).join("")}</div></div>
+<button class="btn p big" id="go"${hasP?"":" disabled"}>つぎへ</button><p id="msg" class="m"></p>`;
+const say=t=>{const m=$("#msg");if(m)m.textContent=t};
+$$("[data-l]").forEach(b=>b.onclick=()=>{S.limit=+b.dataset.l;$$("[data-l]").forEach(x=>x.classList.toggle("on",x===b))});
+if(hasP){$("#ch").onclick=()=>{S.photo=null;setup()};$("#go").onclick=draw;return}
+const cc=$("#cc");cc.oninput=async()=>{const c=cc.value.replace(/\D/g,"");cc.value=c;if(c.length!==4)return;$("#cm").textContent="さがしています…";
+try{const r=await sel(`artworks?code=eq.${c}&created_at=gte.${since()}&order=created_at.desc&limit=1&select=*`);if(!r.length){$("#cm").textContent="この番号の写真が見つかりません（送ってから3時間以内の番号です）";return}S.photo=r[0];setup()}catch(e){$("#cm").textContent=e.message}};
+$("#pk").onclick=()=>$("#ff").click();
+$("#ff").onchange=e=>{const f=e.target.files[0];if(!f)return;$("#pw").innerHTML=`<div class="pv"><img src="${URL.createObjectURL(f)}" alt="選んだ写真"></div><p class="m">ここは<b>写真を撮った人だけ</b>が書いてください（描く人は見ないでね）。</p>${whyBlock()}<button class="btn p" id="up" disabled>この写真を使う</button>`;bindWhy();
+const chk=()=>$("#up").disabled=!whyOK(readWhy());$$("#wt .chip").forEach(b=>b.addEventListener("click",chk));$("#wx").oninput=chk;
+$("#up").onclick=async()=>{$("#up").disabled=true;$("#up").textContent="送っています…";try{S.photo=await newPhoto(f,"any",readWhy());setup()}catch(x){$("#up").disabled=false;$("#up").textContent="この写真を使う";say("失敗しました："+x.message)}}}}
+
+async function draw(){const P=S.photo,T=S.limit,img=await loadImg(pub(P.artwork_image_path)),ar=img.naturalWidth/img.naturalHeight;
+app.innerHTML=`<div class="dw" style="--ar:${ar}"><div class="stc"><div id="st"><div id="zm"><canvas id="bs"></canvas><canvas id="dr"></canvas></div>
+<div id="ov"><div class="big">写真の持ち主は、画面を見ないでね</div><div class="m">${T?T/1000+"秒。":"時間は無制限。"}セリフや文字ではなく、絵で描き足してみよう。</div><button class="btn p big" id="go">スタート</button></div></div></div>
+<div id="tl"><div class="row"><span id="tm">${T?T/1000:"—"}</span><span class="m">秒</span></div><button class="btn p big" id="fin" disabled style="width:100%">完成</button>
+<div class="row" id="pl">${PAL.map((c,i)=>`<button class="sw${i==0?" on":""}" style="background:${c}" data-c="${c}" aria-label="色"></button>`).join("")}</div>
+<div class="row"><button class="btn p" id="pen">ペン</button><button class="btn" id="era">消しゴム</button></div>
+<div class="row" id="sz">${SIZES.map((s,i)=>`<button class="szb${i==1?" on":""}" data-s="${s}" aria-label="太さ"><i style="width:${s+4}px;height:${s+4}px"></i></button>`).join("")}</div>
+<div class="row"><button class="btn" id="und">↩ ひとつ戻す</button></div>
+<div class="row"><label><input type="checkbox" id="fg" style="width:22px;height:22px;vertical-align:middle"> 指でも描く</label><button class="btn" id="rz">もとの大きさ</button></div>
+<p class="m">ペンで描く／指2本で拡大・移動</p></div></div>`;
+const bs=$("#bs"),dr=$("#dr"),st=$("#st"),zm=$("#zm");bs.width=dr.width=img.naturalWidth;bs.height=dr.height=img.naturalHeight;bs.getContext("2d").drawImage(img,0,0);
+const x=dr.getContext("2d");let K=[],cur=null,curId=null,run=false,t0=0,col=PAL[0],sz=SIZES[1],er=false,dt=0,iv,fg=false;
+const paint=()=>{x.clearRect(0,0,dr.width,dr.height);for(const s of K){x.globalCompositeOperation=s.e?"destination-out":"source-over";x.strokeStyle=s.c;x.lineWidth=s.w;x.lineCap=x.lineJoin="round";x.beginPath();s.p.forEach(([a,b],j)=>j?x.lineTo(a,b):x.moveTo(a,b));if(s.p.length<2)x.lineTo(s.p[0][0]+.1,s.p[0][1]);x.stroke()}};
+const V={k:1,x:0,y:0},ptrs=new Map();let g=null;
+const apply=()=>{const W=st.clientWidth,Hh=st.clientHeight;V.k=Math.min(4,Math.max(1,V.k));V.x=Math.min(0,Math.max(W-W*V.k,V.x));V.y=Math.min(0,Math.max(Hh-Hh*V.k,V.y));zm.style.transform=`translate(${V.x}px,${V.y}px) scale(${V.k})`};
+const pt=e=>{const r=dr.getBoundingClientRect();return[Math.round((e.clientX-r.left)*dr.width/r.width),Math.round((e.clientY-r.top)*dr.height/r.height),Math.round(performance.now()-t0)]};
+const gInit=()=>{const a=[...ptrs.values()],r=st.getBoundingClientRect();if(a.length==1)g={m:"pan",sx:a[0].clientX,sy:a[0].clientY,x0:V.x,y0:V.y};else if(a.length>=2){const[p,q]=a,d=Math.hypot(p.clientX-q.clientX,p.clientY-q.clientY)||1,cx=(p.clientX+q.clientX)/2-r.left,cy=(p.clientY+q.clientY)/2-r.top;g={m:"pinch",d0:d,k0:V.k,x0:V.x,y0:V.y,cx,cy}}else g=null};
+st.addEventListener("pointerdown",e=>{if(e.target.closest("#ov"))return;const touch=e.pointerType==="touch";
+if(!touch||fg){if(!run||cur)return;e.preventDefault();st.setPointerCapture(e.pointerId);curId=e.pointerId;cur={c:col,w:Math.max(1,Math.round(sz*dr.width/600/V.k)),e:er,p:[pt(e)]};K.push(cur);paint();return}
+e.preventDefault();ptrs.set(e.pointerId,e);try{st.setPointerCapture(e.pointerId)}catch{}gInit()});
+st.addEventListener("pointermove",e=>{if(cur&&e.pointerId===curId){cur.p.push(pt(e));paint();return}
+if(!ptrs.has(e.pointerId)||!g)return;ptrs.set(e.pointerId,e);const a=[...ptrs.values()],r=st.getBoundingClientRect();
+if(g.m=="pan"&&a.length==1){V.x=g.x0+(e.clientX-g.sx);V.y=g.y0+(e.clientY-g.sy);apply()}
+else if(g.m=="pinch"&&a.length>=2){const[p,q]=a,d=Math.hypot(p.clientX-q.clientX,p.clientY-q.clientY)||1,cx=(p.clientX+q.clientX)/2-r.left,cy=(p.clientY+q.clientY)/2-r.top,k=Math.min(4,Math.max(1,g.k0*d/g.d0)),ux=(g.cx-g.x0)/g.k0,uy=(g.cy-g.y0)/g.k0;V.k=k;V.x=cx-ux*k;V.y=cy-uy*k;apply()}});
+const up_=e=>{if(e.pointerId===curId){cur=null;curId=null}if(ptrs.delete(e.pointerId))gInit()};st.addEventListener("pointerup",up_);st.addEventListener("pointercancel",up_);
+$("#rz").onclick=()=>{V.k=1;V.x=V.y=0;apply()};$("#fg").onchange=e=>fg=e.target.checked;
+$("#pl").onclick=e=>{const c=e.target.dataset?.c;if(c){col=c;er=false;$("#pen").classList.add("p");$("#era").classList.remove("p");$$(".sw").forEach(b=>b.classList.toggle("on",b.dataset.c==c))}};
+$("#pen").onclick=()=>{er=false;$("#pen").classList.add("p");$("#era").classList.remove("p")};$("#era").onclick=()=>{er=true;$("#era").classList.add("p");$("#pen").classList.remove("p")};
+$("#sz").onclick=e=>{const b=e.target.closest(".szb");if(b){sz=+b.dataset.s;$$(".szb").forEach(y=>y.classList.toggle("on",y===b))}};
+$("#und").onclick=()=>{K.pop();paint()};
+$("#go").onclick=()=>{const ov=$("#ov");let n=3;ov.innerHTML=`<div class="cd">${n}</div>`;const t=every(()=>{n--;if(n>0){ov.firstChild.textContent=n;return}clearInterval(t);ov.remove();run=true;t0=performance.now();$("#fin").disabled=false;$("#fin").onclick=fin;
+iv=every(()=>{const el=performance.now()-t0;if(T){const l=T-el;$("#tm").textContent=Math.max(0,Math.ceil(l/1000));if(l<=0)fin()}else $("#tm").textContent=Math.floor(el/1000)},100)},800)};
+function fin(){if(!run)return;run=false;cur=null;clearInterval(iv);dt=T?Math.min(T,Math.round(performance.now()-t0)):Math.round(performance.now()-t0);
+$("#tl").innerHTML=`<h2>この絵に、題をつけよう</h2><p class="m">題、または「何を描いた？」を一言。必ず1つ書いてください。写真の持ち主には見せないでね。</p><input id="ti" type="text" maxlength="40" placeholder="例：盗人逮捕！"><div class="row"><button class="btn p big" id="sv" disabled>保存する</button></div><p id="er" class="m"></p>`;
+$("#ti").oninput=e=>$("#sv").disabled=!e.target.value.trim();
+$("#sv").onclick=async()=>{$("#sv").disabled=true;$("#er").textContent="保存しています…";const title=$("#ti").value.trim();
+try{const n=crypto.randomUUID(),pa=`${P.root_id}/${n}.jpg`,pl=`${P.root_id}/${n}_layer.png`,c=document.createElement("canvas");c.width=bs.width;c.height=bs.height;const cg=c.getContext("2d");cg.drawImage(bs,0,0);cg.drawImage(dr,0,0);
+await up(pa,await blob(c,"image/jpeg",.85));await up(pl,await blob(dr,"image/png"));
+await ins("artworks",{artwork_id:n,parent_id:P.artwork_id,root_id:P.root_id,participant_id:pid,generation:1,original_image_path:P.original_image_path,artwork_image_path:pa,layer_image_path:pl,strokes:K,drawing_time:dt,title,round:1,time_limit:S.limit,theme:P.theme,device:dev(),app_version:VER});
+reveal({id:n,title,src:c.toDataURL("image/jpeg",.85)})}catch(e){$("#sv").disabled=false;$("#er").textContent="失敗しました。もう一度押してください："+e.message}}}}
+
+function reveal(r){const P=S.photo,why=[P.why_tags,P.why_text].filter(Boolean).join("　");let done=false;
+app.innerHTML=`<h1>ネタバラシ！</h1><div class="cmp"><figure><img src="${pub(P.artwork_image_path)}" alt=""><figcaption>撮った写真</figcaption></figure><figure><img src="${r.src}" alt=""><figcaption>描き足した絵</figcaption></figure></div>
+<p class="m" style="margin:0">描いた人の見方</p><p class="ttl" style="margin-top:0">「${esc(r.title)}」</p>
+<button class="flip" id="fl">撮った人の見方は…？　▶ タップでめくる</button>
+<div id="af" hidden><div class="card"><div class="m">撮った人の見方</div><p class="big">${why?esc(why):"（書かれていません）"}</p></div>
+<div class="card"><b>描き足した絵は、どうだった？</b><div class="chips" id="ft">${FITS.map(f=>`<button class="chip" data-f="${f}">${f}</button>`).join("")}</div><textarea id="fx" rows="2" maxlength="120" placeholder="ひとこと（任意）" style="width:100%"></textarea></div>
+<div class="card"><label><input type="checkbox" id="cs" style="width:24px;height:24px;vertical-align:middle"> <b>この作品を、展示の「ログ」に載せてもいい</b>（ふたりとも）</label><p class="m" style="margin:4px 0 0">オフのままでも、卒業制作の記録として保存されます。${esc(CONTACT)}。</p></div>
+<div class="row"><button class="btn p big" id="nx">交代して、もう1枚</button><button class="btn big" id="en">おわり</button></div><p id="er" class="m"></p></div>`;
+$("#fl").onclick=()=>{$("#fl").hidden=true;$("#af").hidden=false};
+$$("#ft .chip").forEach(b=>b.onclick=()=>{const on=b.classList.contains("on");$$("#ft .chip").forEach(x=>x.classList.remove("on"));if(!on)b.classList.add("on")});
+async function commit(consent){if(done)return;done=true;const fit=$("#ft .chip.on")?.dataset.f||null,ft=($("#fx")?.value||"").trim()||null;
+try{await ins("pairs",{pair_id:crypto.randomUUID(),photo_a:P.artwork_id,photo_b:null,result_1:r.id,result_2:null,consent,time_limit:S.limit,theme_a:P.theme,theme_b:null,app_version:VER});
+if(fit||ft)await ins("surveys",{artwork_id:r.id,participant_id:pid,stage:3,fit,free_text:ft})}catch(e){done=false;throw e}}
+const go=async(fn)=>{$("#nx").disabled=$("#en").disabled=true;$("#er").textContent="保存しています…";try{await commit($("#cs").checked);fn()}catch(e){$("#nx").disabled=$("#en").disabled=false;$("#er").textContent="保存に失敗しました。もう一度："+e.message}};
+$("#nx").onclick=()=>go(()=>{S.photo=null;setup()});$("#en").onclick=()=>go(finale);
+later(async()=>{try{await commit(false)}catch{}finale()},180000)}
+
+function finale(){stopAll();S.photo=null;app.innerHTML=`<h1>ありがとうございました</h1><p>つぎのふたりが、はじめられます。</p><div class="row"><a class="btn" href="#/log">みんなの作品を見る</a><button class="btn p" id="nw">つぎのふたりへ</button></div>`;$("#nw").onclick=setup;later(()=>$("#nw")&&$("#nw").click(),30000)}}
+
+// ───────── ログ ─────────
+async function pairsData(){const P=await sel(`pairs?consent=eq.true&select=*&order=created_at.desc&limit=30`);const ids=[...new Set(P.flatMap(p=>[p.photo_a,p.photo_b,p.result_1,p.result_2]).filter(Boolean))];
+const A={};if(ids.length)(await sel(`artworks?artwork_id=in.(${ids.join(",")})&select=artwork_id,artwork_image_path,title,why_tags,why_text`)).forEach(a=>A[a.artwork_id]=a);return{P,A}}
+const fig=(A,ph,rs)=>{const p=A[ph],r=A[rs];if(!p||!r)return"";const why=[p.why_tags,p.why_text].filter(Boolean).join("　");return`<figure style="margin:0"><img class="tg" src="${pub(r.artwork_image_path)}" data-a="${pub(r.artwork_image_path)}" data-b="${pub(p.artwork_image_path)}" style="width:100%;border:2px solid #2B2B2B;display:block" alt=""><div class="ttl" style="font-size:1.2rem">「${esc(r.title)}」</div>${why?`<div class="m">撮った人の見方：${esc(why)}</div>`:""}</figure>`};
+async function log(){const{P,A}=await pairsData();
+app.innerHTML=`<h1>みんなのログ</h1><p class="m">載せてもいいと答えた作品です。絵をタップすると元の写真に切り替わります。順位や「いいね」はありません。</p>${P.length?`<div class="pair">${P.map(p=>`<div class="card">${fig(A,p.photo_a,p.result_1)}</div>`).join("")}</div>`:'<div class="card">まだ作品がありません。</div>'}`;
+$$(".tg").forEach(i=>i.onclick=()=>{i.src=i.src==i.dataset.a?i.dataset.b:i.dataset.a})}
+async function show(){let d=await pairsData(),k=0;
+const frame=()=>{const{P,A}=d;if(!P.length){app.innerHTML=`<h1 style="text-align:center">ミカタス</h1><p class="big" style="text-align:center">まだ作品がありません。ふたりで描くと、ここに並びます。</p>`;return}
+const a=P[k++%P.length],b=P[k++%P.length];app.innerHTML=`<div class="fade"><div class="cmp">${[a,b].filter((p,i,s)=>s.indexOf(p)==i).map(p=>fig(A,p.photo_a,p.result_1)).join("")}</div></div>`};
+frame();every(frame,10000);every(async()=>{try{d=await pairsData()}catch{}},60000)}
+</script></body></html>
