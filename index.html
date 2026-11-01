@@ -57,6 +57,9 @@ input.code4{width:7.5em;font-size:1.6rem;letter-spacing:.2em;text-align:center}
 .hv .fb{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
 .hv .fb div{border:2px solid var(--fg);border-radius:12px;background:#fff;padding:8px;font-weight:900;text-align:center}
 .hv .fb svg{width:100%;height:auto;display:block;margin-bottom:4px}
+.hbg{position:fixed;left:0;right:0;bottom:0;top:53px;background:#DDE5F4 url(home-bg.jpg) center/cover no-repeat;display:flex;align-items:center;justify-content:center;z-index:5;padding:16px}
+.hcard{width:min(580px,100%);background:rgba(250,246,238,.96);border:4px solid var(--fg);border-radius:28px;padding:26px 28px;text-align:center;box-shadow:0 8px 28px rgba(0,0,0,.25)}
+.hnote{position:absolute;left:50%;transform:translateX(-50%);width:max-content;max-width:calc(100% - 24px);bottom:10px;text-align:center;font-size:12px;line-height:1.5;color:#fff;background:rgba(43,43,43,.72);border-radius:12px;padding:4px 12px}
 .kiosk header.top{display:none}.kiosk main{max-width:none;padding:24px 32px}
 .kiosk .ttl{font-size:2.2rem}.kiosk .cmp{grid-template-columns:repeat(2,1fr)}
 .fade{animation:f .6s}@keyframes f{from{opacity:0}to{opacity:1}}
@@ -102,15 +105,15 @@ catch(e){app.innerHTML=`<h1>開けませんでした</h1><p class="m">${esc(e.me
 addEventListener("hashchange",route);route();
 
 // ───────── 最初の画面 ─────────
-function fbk(i){const ph='<svg viewBox="0 0 120 84" aria-hidden="true"><rect width="120" height="84" fill="#E6EAF5"/><circle cx="92" cy="22" r="10" fill="#FFD166"/><path d="M0 84 L34 40 L60 66 L84 46 L120 84Z" fill="#9DB4E8"/>';
-i.outerHTML='<div class="fb"><div>'+ph+'</svg>写真</div><div>'+ph+'<circle cx="60" cy="40" r="22" fill="none" stroke="#FF6B4A" stroke-width="5"/></svg>描き足す</div><div><svg viewBox="0 0 120 84" aria-hidden="true"><rect width="120" height="84" fill="#FFF4C8"/><text x="60" y="52" text-anchor="middle" font-size="26" font-weight="900" fill="#2B2B2B">題</text></svg>題をつける</div></div>'}
 function home(){
-app.innerHTML=`<div class="hero"><div class="hv"><img src="mihon.png" alt="ミカタスの見本（写真、描き足した絵、題）" onerror="fbk(this)"></div>
-<div><h1 style="margin-top:0">ふたりのミカタを描きタス。</h1>
-<p style="font-size:1.1rem;margin:.2em 0 .6em">友だちが撮った写真の、気になったところに描き足す。見せ合うと、知らなかった見方が見えてくる。</p>
-<div class="steps"><div class="card"><b>1 写真を送る</b><span class="m">つい撮った1枚</span></div><div class="card"><b>2 描き足す</b><span class="m">相手の写真に</span></div><div class="card"><b>3 見せ合う</b><span class="m">見方のズレを話す</span></div></div>
-<div class="row"><a class="btn p big" href="#/play">はじめる</a></div><div class="row"><a class="btn" href="#/send">スマホから写真を送る</a><a class="btn" href="#/log">みんなのログを見る</a></div></div></div>
-<p class="m">写真・描いた絵・題は、卒業制作の記録として保存します（位置情報は削除）。${esc(CONTACT)}。</p>`}
+app.innerHTML=`<div class="hbg"><div class="hcard"><div style="display:inline-flex;align-items:center;gap:14px">
+<svg width="64" height="64" viewBox="0 0 220 220" role="img" aria-label="ミカタスのロゴ"><g transform="translate(-13 -13)"><rect x="30" y="70" width="160" height="80" rx="40" fill="#FF6B4A"/><rect x="70" y="30" width="80" height="160" rx="40" fill="#FF6B4A"/></g><g transform="translate(13 13)"><rect x="30" y="70" width="160" height="80" rx="40" fill="#3D6FE0"/><rect x="70" y="30" width="80" height="160" rx="40" fill="#3D6FE0"/></g><rect x="30" y="70" width="160" height="80" rx="40" fill="#2B2B2B"/><rect x="70" y="30" width="80" height="160" rx="40" fill="#2B2B2B"/><rect x="97" y="97" width="11" height="24" rx="5.5" fill="#fff"/><rect x="113" y="97" width="11" height="24" rx="5.5" fill="#fff"/></svg>
+<span class="wm" style="font-size:clamp(40px,7vw,64px);line-height:1">ミカタス</span></div>
+<div style="font-size:clamp(18px,3vw,26px);font-weight:900;margin:6px 0 4px">ふたりのミカタを描きタス。</div>
+<div style="font-size:clamp(14px,2vw,17px);line-height:1.6;margin-bottom:16px">友だちが撮った写真の、気になったところに描き足す。<br>見せ合うと、知らなかった見方が見えてくる。</div>
+<a class="btn p big" href="#/play">はじめる</a>
+<div class="row" style="justify-content:center;margin-bottom:0"><a href="#/log" style="font-weight:900">みんなのログを見る</a><a href="#/send" style="font-weight:900">スマホから写真を送る</a></div></div>
+<div class="hnote">写真・描いた絵・題は、卒業制作の記録として保存します（位置情報は削除）。${esc(CONTACT)}。</div></div>`}
 
 // ───────── スマホ：写真を送る ─────────
 function send(){let ti=Math.floor(Math.random()*3),file=null;
