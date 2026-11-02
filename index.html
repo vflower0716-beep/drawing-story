@@ -60,6 +60,8 @@ input.code4{width:7.5em;font-size:1.6rem;letter-spacing:.2em;text-align:center}
 .hbg{position:fixed;left:0;right:0;bottom:0;top:53px;background:#DDE5F4 url(home-bg.jpg) center/cover no-repeat;display:flex;align-items:center;justify-content:center;z-index:5;padding:16px}
 .hcard{width:min(580px,100%);background:rgba(250,246,238,.96);border:4px solid var(--fg);border-radius:28px;padding:26px 28px;text-align:center;box-shadow:0 8px 28px rgba(0,0,0,.25)}
 .hnote{position:absolute;left:50%;transform:translateX(-50%);width:max-content;max-width:calc(100% - 24px);bottom:10px;text-align:center;font-size:12px;line-height:1.5;color:#fff;background:rgba(43,43,43,.72);border-radius:12px;padding:4px 12px}
+.ban{background:#FFF4C8;border:3px solid var(--fg);border-radius:14px;padding:8px 16px;font-weight:900;font-size:1.15rem;margin:8px 0}
+.qr svg{width:min(260px,60vw);height:auto;display:block;border:3px solid var(--fg);border-radius:12px}
 .kiosk header.top{display:none}.kiosk main{max-width:none;padding:24px 32px}
 .kiosk .ttl{font-size:2.2rem}.kiosk .cmp{grid-template-columns:repeat(2,1fr)}
 .fade{animation:f .6s}@keyframes f{from{opacity:0}to{opacity:1}}
@@ -127,20 +129,31 @@ $("#f").onchange=e=>{file=e.target.files[0];if(!file)return;$("#b").textContent=
 $("#pv").innerHTML=`<div class="pv"><img src="${URL.createObjectURL(file)}" alt="選んだ写真"></div>${whyBlock()}<button class="btn p big" id="s" disabled>送る</button><p id="er" class="m"></p>`;bindWhy();
 const chk=()=>$("#s").disabled=!whyOK(readWhy());$$("#wt .chip").forEach(b=>b.addEventListener("click",chk));$("#wx").oninput=chk;
 $("#s").onclick=async()=>{$("#s").disabled=true;$("#s").textContent="送っています…";$("#er").textContent="";
-try{const r=await newPhoto(file,THEMES[ti][0],readWhy());app.innerHTML=`<h1>送れました</h1><div class="card" style="text-align:center"><div class="m">この番号を、展示のiPadに入力してください</div><div class="code">${r.code}</div><div class="m">3時間以内に使ってください</div></div><p><a class="btn" href="#/send">もう1枚送る</a></p>`}
+try{const r=await newPhoto(file,THEMES[ti][0],readWhy());app.innerHTML=`<h1>送れました</h1><div class="card" style="text-align:center"><div class="m">展示のiPadで「番号を入力する」を押して、この番号を入れてください</div><div class="code">${r.code}</div><div class="m">3時間以内に使ってください</div></div><p><a class="btn" href="#/send">もう1枚送る</a></p>`}
 catch(x){$("#s").disabled=false;$("#s").textContent="送る";$("#er").textContent="失敗しました："+x.message}}}}
 
 // ───────── 展示iPad：相手の写真に描き足す ─────────
-function play(){const S={photo:null,limit:60000};setup();
+function play(){const S={photo:null,limit:60000,turn:1,mode:1};
+const QRSVG=`<svg viewBox="0 0 41 41" shape-rendering="crispEdges" role="img" aria-label="写真を送るページのQRコード"><path fill="#fff" d="M0 0h41v41h-41z"/><path class="qrline" stroke="#2b2b2b" d="M2 2.5h7m3 0h6m1 0h3m1 0h2m1 0h1m1 0h3m1 0h7m-37 1h1m5 0h1m4 0h1m1 0h1m1 0h4m2 0h2m2 0h2m1 0h1m1 0h1m5 0h1m-37 1h1m1 0h3m1 0h1m1 0h2m1 0h2m3 0h1m1 0h4m1 0h1m2 0h2m2 0h1m1 0h3m1 0h1m-37 1h1m1 0h3m1 0h1m5 0h1m4 0h2m1 0h1m2 0h6m1 0h1m1 0h3m1 0h1m-37 1h1m1 0h3m1 0h1m1 0h5m1 0h1m1 0h1m1 0h1m1 0h4m1 0h3m2 0h1m1 0h3m1 0h1m-37 1h1m5 0h1m1 0h1m4 0h3m2 0h3m4 0h2m1 0h1m1 0h1m5 0h1m-37 1h7m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h7m-26 1h1m2 0h2m3 0h3m1 0h1m2 0h1m-26 1h1m2 0h1m1 0h1m1 0h2m1 0h2m2 0h1m1 0h2m1 0h3m1 0h4m1 0h1m1 0h2m1 0h1m-32 1h1m3 0h1m1 0h1m4 0h2m2 0h1m3 0h2m4 0h1m3 0h3m-34 1h3m2 0h1m1 0h5m2 0h3m2 0h1m1 0h5m1 0h2m2 0h1m-33 1h3m1 0h2m3 0h2m2 0h2m1 0h6m2 0h1m1 0h1m2 0h1m1 0h2m1 0h1m-35 1h1m1 0h14m1 0h2m2 0h2m1 0h1m2 0h1m1 0h3m1 0h4m-36 1h2m1 0h2m1 0h1m3 0h1m5 0h1m1 0h1m1 0h3m1 0h1m1 0h3m2 0h1m1 0h2m-34 1h3m1 0h3m2 0h1m1 0h3m2 0h1m1 0h1m2 0h1m2 0h2m3 0h1m1 0h3m-36 1h1m3 0h2m1 0h1m1 0h1m1 0h2m1 0h1m2 0h1m1 0h1m2 0h3m1 0h2m1 0h2m1 0h1m1 0h3m-31 1h1m1 0h2m1 0h3m5 0h2m1 0h3m2 0h1m2 0h1m2 0h2m1 0h1m-36 1h1m2 0h2m1 0h1m2 0h1m4 0h2m1 0h1m1 0h1m6 0h2m2 0h2m-32 1h1m1 0h1m2 0h1m1 0h4m1 0h2m1 0h1m1 0h3m4 0h1m1 0h2m1 0h2m1 0h2m-32 1h3m1 0h1m2 0h2m3 0h7m2 0h1m1 0h1m1 0h1m1 0h1m2 0h4m-36 1h1m1 0h1m2 0h3m1 0h1m1 0h4m1 0h1m1 0h6m5 0h1m2 0h2m1 0h1m-37 1h1m1 0h1m4 0h1m2 0h4m2 0h1m1 0h3m2 0h1m2 0h2m4 0h1m-32 1h1m2 0h3m5 0h1m8 0h1m1 0h1m1 0h4m4 0h1m1 0h1m-35 1h3m1 0h1m1 0h1m5 0h2m2 0h3m1 0h5m2 0h2m1 0h1m1 0h2m1 0h1m-37 1h2m2 0h1m1 0h1m1 0h3m1 0h2m1 0h5m1 0h2m1 0h2m1 0h1m2 0h2m2 0h1m1 0h1m-37 1h1m1 0h2m1 0h1m1 0h1m1 0h1m1 0h1m6 0h1m1 0h1m2 0h1m1 0h2m3 0h1m1 0h1m2 0h1m-32 1h1m1 0h3m1 0h2m5 0h1m2 0h2m1 0h1m1 0h5m1 0h1m-28 1h1m2 0h1m2 0h3m1 0h1m1 0h4m1 0h1m2 0h1m2 0h2m1 0h2m2 0h2m-36 1h2m2 0h5m2 0h2m4 0h1m1 0h3m1 0h2m3 0h5m1 0h1m-27 1h1m2 0h1m1 0h1m2 0h3m1 0h1m2 0h1m1 0h2m1 0h1m3 0h2m1 0h1m-36 1h7m2 0h1m1 0h5m3 0h5m4 0h1m1 0h1m1 0h3m-35 1h1m5 0h1m3 0h1m1 0h2m1 0h1m1 0h2m1 0h2m2 0h1m3 0h1m3 0h1m1 0h1m-35 1h1m1 0h3m1 0h1m1 0h2m1 0h1m1 0h3m1 0h4m5 0h1m1 0h9m-37 1h1m1 0h3m1 0h1m4 0h1m1 0h3m1 0h1m1 0h1m1 0h2m1 0h5m1 0h2m1 0h1m1 0h1m-36 1h1m1 0h3m1 0h1m3 0h5m1 0h2m1 0h1m3 0h2m5 0h2m3 0h1m-36 1h1m5 0h1m1 0h1m2 0h4m1 0h1m2 0h3m1 0h1m2 0h2m2 0h1m1 0h4m-36 1h7m3 0h1m3 0h1m1 0h3m1 0h2m5 0h1m1 0h2m2 0h4"/></svg>`;
+const who=()=>S.mode==2?null:(S.turn==1?["一人目","二人目"]:["二人目","一人目"]);
+function intro(){stopAll();S.photo=null;const w=who();
+app.innerHTML=`<div class="chips"><button class="chip${S.mode==1?" on":""}" data-m="1">iPadは1台（交代で）</button><button class="chip${S.mode==2?" on":""}" data-m="2">iPadは2台（同時に）</button></div>
+<h1>${w?w[0]+"の写真を、スマホで送ろう":"それぞれ、スマホで写真を送ろう"}</h1>${w?`<div class="ban">${S.turn}/2　${w[0]}の写真に、${w[1]}が絵を描き足します</div>`:""}
+<div class="card"><div style="display:flex;gap:28px;flex-wrap:wrap;align-items:center;justify-content:center"><div class="qr">${QRSVG}<div class="m" style="text-align:center">スマホのカメラで読み取る</div></div>
+<ol style="margin:0;padding-left:1.3em;max-width:380px;font-size:1.1rem;line-height:1.9"><li>QRを読み取る</li><li>つい撮った写真を選ぶ</li><li>「どうして撮った？」を書く（相手には見せない）</li><li>出てきた<b>4けたの番号</b>を覚える</li></ol></div></div>
+<div class="row"><button class="btn p big" id="nx0">番号を入力する</button></div>
+<p class="m">スマホがないとき・AirDropで送ったときは、次の画面の「この場で写真を選ぶ」から使えます。</p>`;
+$$("[data-m]").forEach(b=>b.onclick=()=>{S.mode=+b.dataset.m;S.turn=1;intro()});$("#nx0").onclick=setup}
 
 function setup(){stopAll();const hasP=!!S.photo;
-app.innerHTML=`<h1>相手の写真に、描き足します</h1><p class="m">友だちが送った写真を読み込んで、あなたが絵を描き足します。iPadが2台あるときは、ふたりが同時に始められます。</p>
+const w=who();app.innerHTML=`<h1>${w?w[0]+"の写真の番号を入力":"相手の写真の番号を入力"}</h1>${w?`<div class="ban">${S.turn}/2　${w[0]}の写真に、${w[1]}が絵を描き足します</div>`:`<p class="m">友だちが送った写真を読み込んで、あなたが絵を描き足します。</p>`}
 <div class="card slot">${hasP?`<b>読み込めました</b><img src="${pub(S.photo.artwork_image_path)}" alt="読み込んだ写真"><button class="btn" id="ch">ちがう写真にする</button>`:
 `<b>友だちがスマホで送った、4けたの番号</b><div class="row"><input class="code4" id="cc" type="tel" inputmode="numeric" maxlength="4" placeholder="1234" autocomplete="off"><span id="cm" class="m"></span></div>
 <p class="m" style="margin:2px 0">番号がないときは、AirDropなどで送った写真や、その場で撮った写真も使えます。</p>
 <input type="file" id="ff" accept="image/*" hidden><button class="btn" id="pk">この場で写真を選ぶ／撮る</button><div id="pw"></div>`}</div>
 <div class="card"><b>時間</b><div class="chips">${[[30000,"30秒"],[60000,"60秒（おすすめ）"],[0,"無制限"]].map(([v,l])=>`<button class="chip${S.limit===v?" on":""}" data-l="${v}">${l}</button>`).join("")}</div></div>
-<button class="btn p big" id="go"${hasP?"":" disabled"}>つぎへ</button><p id="msg" class="m"></p>`;
+<div class="row"><button class="btn" id="bk">← QRにもどる</button><button class="btn p big" id="go"${hasP?"":" disabled"}>つぎへ</button></div><p id="msg" class="m"></p>`;
+$("#bk").onclick=intro;
 const say=t=>{const m=$("#msg");if(m)m.textContent=t};
 $$("[data-l]").forEach(b=>b.onclick=()=>{S.limit=+b.dataset.l;$$("[data-l]").forEach(x=>x.classList.toggle("on",x===b))});
 if(hasP){$("#ch").onclick=()=>{S.photo=null;setup()};$("#go").onclick=draw;return}
@@ -164,19 +177,23 @@ app.innerHTML=`<div class="dw" style="--ar:${ar}"><div class="stc"><div id="st">
 const bs=$("#bs"),dr=$("#dr"),st=$("#st"),zm=$("#zm");bs.width=dr.width=img.naturalWidth;bs.height=dr.height=img.naturalHeight;bs.getContext("2d").drawImage(img,0,0);
 const x=dr.getContext("2d");let K=[],cur=null,curId=null,run=false,t0=0,col=PAL[0],sz=SIZES[1],er=false,dt=0,iv,fg=false;
 const paint=()=>{x.clearRect(0,0,dr.width,dr.height);for(const s of K){x.globalCompositeOperation=s.e?"destination-out":"source-over";x.strokeStyle=s.c;x.lineWidth=s.w;x.lineCap=x.lineJoin="round";x.beginPath();s.p.forEach(([a,b],j)=>j?x.lineTo(a,b):x.moveTo(a,b));if(s.p.length<2)x.lineTo(s.p[0][0]+.1,s.p[0][1]);x.stroke()}};
-const V={k:1,x:0,y:0},ptrs=new Map();let g=null;
+const V={k:1,x:0,y:0},ptrs=new Map(),sp=new Map();let g=null,mv=false,t1=0,lt=null;
 const apply=()=>{const W=st.clientWidth,Hh=st.clientHeight;V.k=Math.min(4,Math.max(1,V.k));V.x=Math.min(0,Math.max(W-W*V.k,V.x));V.y=Math.min(0,Math.max(Hh-Hh*V.k,V.y));zm.style.transform=`translate(${V.x}px,${V.y}px) scale(${V.k})`};
 const pt=e=>{const r=dr.getBoundingClientRect();return[Math.round((e.clientX-r.left)*dr.width/r.width),Math.round((e.clientY-r.top)*dr.height/r.height),Math.round(performance.now()-t0)]};
 const gInit=()=>{const a=[...ptrs.values()],r=st.getBoundingClientRect();if(a.length==1)g={m:"pan",sx:a[0].clientX,sy:a[0].clientY,x0:V.x,y0:V.y};else if(a.length>=2){const[p,q]=a,d=Math.hypot(p.clientX-q.clientX,p.clientY-q.clientY)||1,cx=(p.clientX+q.clientX)/2-r.left,cy=(p.clientY+q.clientY)/2-r.top;g={m:"pinch",d0:d,k0:V.k,x0:V.x,y0:V.y,cx,cy}}else g=null};
 st.addEventListener("pointerdown",e=>{if(e.target.closest("#ov"))return;const touch=e.pointerType==="touch";
 if(!touch||fg){if(!run||cur)return;e.preventDefault();st.setPointerCapture(e.pointerId);curId=e.pointerId;cur={c:col,w:Math.max(1,Math.round(sz*dr.width/600/V.k)),e:er,p:[pt(e)]};K.push(cur);paint();return}
-e.preventDefault();ptrs.set(e.pointerId,e);try{st.setPointerCapture(e.pointerId)}catch{}gInit()});
+e.preventDefault();if(ptrs.size===0)mv=false;ptrs.set(e.pointerId,e);sp.set(e.pointerId,[e.clientX,e.clientY]);if(ptrs.size===1)t1=performance.now();try{st.setPointerCapture(e.pointerId)}catch{}gInit()});
 st.addEventListener("pointermove",e=>{if(cur&&e.pointerId===curId){cur.p.push(pt(e));paint();return}
-if(!ptrs.has(e.pointerId)||!g)return;ptrs.set(e.pointerId,e);const a=[...ptrs.values()],r=st.getBoundingClientRect();
+if(!ptrs.has(e.pointerId)||!g)return;{const s0=sp.get(e.pointerId);if(s0&&Math.hypot(e.clientX-s0[0],e.clientY-s0[1])>14)mv=true}ptrs.set(e.pointerId,e);const a=[...ptrs.values()],r=st.getBoundingClientRect();
 if(g.m=="pan"&&a.length==1){V.x=g.x0+(e.clientX-g.sx);V.y=g.y0+(e.clientY-g.sy);apply()}
 else if(g.m=="pinch"&&a.length>=2){const[p,q]=a,d=Math.hypot(p.clientX-q.clientX,p.clientY-q.clientY)||1,cx=(p.clientX+q.clientX)/2-r.left,cy=(p.clientY+q.clientY)/2-r.top,k=Math.min(4,Math.max(1,g.k0*d/g.d0)),ux=(g.cx-g.x0)/g.k0,uy=(g.cy-g.y0)/g.k0;V.k=k;V.x=cx-ux*k;V.y=cy-uy*k;apply()}});
-const up_=e=>{if(e.pointerId===curId){cur=null;curId=null}if(ptrs.delete(e.pointerId))gInit()};st.addEventListener("pointerup",up_);st.addEventListener("pointercancel",up_);
-$("#rz").onclick=()=>{V.k=1;V.x=V.y=0;apply()};$("#fg").onchange=e=>fg=e.target.checked;
+const rzoom=()=>{V.k=1;V.x=V.y=0;apply()};
+const up_=e=>{if(e.pointerId===curId){cur=null;curId=null}
+if(ptrs.has(e.pointerId)){const n=ptrs.size,now=performance.now();
+if(!mv&&t1&&now-t1<350){if(n===2){rzoom();t1=0;lt=null}else if(n===1){if(lt&&now-lt.t<450&&Math.hypot(e.clientX-lt.x,e.clientY-lt.y)<50){rzoom();lt=null}else lt={t:now,x:e.clientX,y:e.clientY}}}}
+sp.delete(e.pointerId);if(ptrs.delete(e.pointerId))gInit()};st.addEventListener("pointerup",up_);st.addEventListener("pointercancel",up_);
+$("#rz").onclick=rzoom;$("#fg").onchange=e=>fg=e.target.checked;
 $("#pl").onclick=e=>{const c=e.target.dataset?.c;if(c){col=c;er=false;$("#pen").classList.add("p");$("#era").classList.remove("p");$$(".sw").forEach(b=>b.classList.toggle("on",b.dataset.c==c))}};
 $("#pen").onclick=()=>{er=false;$("#pen").classList.add("p");$("#era").classList.remove("p")};$("#era").onclick=()=>{er=true;$("#era").classList.add("p");$("#pen").classList.remove("p")};
 $("#sz").onclick=e=>{const b=e.target.closest(".szb");if(b){sz=+b.dataset.s;$$(".szb").forEach(y=>y.classList.toggle("on",y===b))}};
@@ -193,23 +210,24 @@ await ins("artworks",{artwork_id:n,parent_id:P.artwork_id,root_id:P.root_id,part
 reveal({id:n,title,src:c.toDataURL("image/jpeg",.85)})}catch(e){$("#sv").disabled=false;$("#er").textContent="失敗しました。もう一度押してください："+e.message}}}}
 
 function reveal(r){const P=S.photo,why=[P.why_tags,P.why_text].filter(Boolean).join("　");let done=false;
-app.innerHTML=`<h1>ネタバラシ！</h1><div class="cmp"><figure><img src="${pub(P.artwork_image_path)}" alt=""><figcaption>撮った写真</figcaption></figure><figure><img src="${r.src}" alt=""><figcaption>描き足した絵</figcaption></figure></div>
+app.innerHTML=`<h1>ふたりの見方を比べてみよう</h1><div class="ban">${S.mode==2?"この画面を、写真を撮った人に渡してね":"ここからは、写真を撮った人がめくってね"}</div><div class="cmp"><figure><img src="${pub(P.artwork_image_path)}" alt=""><figcaption>撮った写真</figcaption></figure><figure><img src="${r.src}" alt=""><figcaption>描き足した絵</figcaption></figure></div>
 <p class="m" style="margin:0">描いた人の見方</p><p class="ttl" style="margin-top:0">「${esc(r.title)}」</p>
 <button class="flip" id="fl">撮った人の見方は…？　▶ タップでめくる</button>
 <div id="af" hidden><div class="card"><div class="m">撮った人の見方</div><p class="big">${why?esc(why):"（書かれていません）"}</p></div>
 <div class="card"><b>描き足した絵は、どうだった？</b><div class="chips" id="ft">${FITS.map(f=>`<button class="chip" data-f="${f}">${f}</button>`).join("")}</div><textarea id="fx" rows="2" maxlength="120" placeholder="ひとこと（任意）" style="width:100%"></textarea></div>
 <div class="card"><label><input type="checkbox" id="cs" style="width:24px;height:24px;vertical-align:middle"> <b>この作品を、展示の「ログ」に載せてもいい</b>（ふたりとも）</label><p class="m" style="margin:4px 0 0">オフのままでも、卒業制作の記録として保存されます。${esc(CONTACT)}。</p></div>
-<div class="row"><button class="btn p big" id="nx">交代して、もう1枚</button><button class="btn big" id="en">おわり</button></div><p id="er" class="m"></p></div>`;
+<div class="row">${S.mode==1&&S.turn==1?`<button class="btn p big" id="nx">交代して、二人目の写真へ</button>`:""}<button class="btn big" id="en">おわり</button></div><p id="er" class="m"></p></div>`;
 $("#fl").onclick=()=>{$("#fl").hidden=true;$("#af").hidden=false};
 $$("#ft .chip").forEach(b=>b.onclick=()=>{const on=b.classList.contains("on");$$("#ft .chip").forEach(x=>x.classList.remove("on"));if(!on)b.classList.add("on")});
 async function commit(consent){if(done)return;done=true;const fit=$("#ft .chip.on")?.dataset.f||null,ft=($("#fx")?.value||"").trim()||null;
 try{await ins("pairs",{pair_id:crypto.randomUUID(),photo_a:P.artwork_id,photo_b:null,result_1:r.id,result_2:null,consent,time_limit:S.limit,theme_a:P.theme,theme_b:null,app_version:VER});
 if(fit||ft)await ins("surveys",{artwork_id:r.id,participant_id:pid,stage:3,fit,free_text:ft})}catch(e){done=false;throw e}}
-const go=async(fn)=>{$("#nx").disabled=$("#en").disabled=true;$("#er").textContent="保存しています…";try{await commit($("#cs").checked);fn()}catch(e){$("#nx").disabled=$("#en").disabled=false;$("#er").textContent="保存に失敗しました。もう一度："+e.message}};
-$("#nx").onclick=()=>go(()=>{S.photo=null;setup()});$("#en").onclick=()=>go(finale);
+const go=async(fn)=>{const nb=$("#nx");if(nb)nb.disabled=true;$("#en").disabled=true;$("#er").textContent="保存しています…";try{await commit($("#cs").checked);fn()}catch(e){if(nb)nb.disabled=false;$("#en").disabled=false;$("#er").textContent="保存に失敗しました。もう一度："+e.message}};
+if($("#nx"))$("#nx").onclick=()=>go(()=>{S.turn=2;intro()});$("#en").onclick=()=>go(finale);
 later(async()=>{try{await commit(false)}catch{}finale()},180000)}
 
-function finale(){stopAll();S.photo=null;app.innerHTML=`<h1>ありがとうございました</h1><p>つぎのふたりが、はじめられます。</p><div class="row"><a class="btn" href="#/log">みんなの作品を見る</a><button class="btn p" id="nw">つぎのふたりへ</button></div>`;$("#nw").onclick=setup;later(()=>$("#nw")&&$("#nw").click(),30000)}}
+function finale(){stopAll();S.photo=null;S.turn=1;app.innerHTML=`<h1>ありがとうございました</h1><p>つぎのふたりが、はじめられます。</p><div class="row"><a class="btn" href="#/log">みんなの作品を見る</a><button class="btn p" id="nw">つぎのふたりへ</button></div>`;$("#nw").onclick=intro;later(()=>$("#nw")&&$("#nw").click(),30000)}
+intro()}
 
 // ───────── ログ ─────────
 async function pairsData(){const P=await sel(`pairs?consent=eq.true&select=*&order=created_at.desc&limit=30`);const ids=[...new Set(P.flatMap(p=>[p.photo_a,p.photo_b,p.result_1,p.result_2]).filter(Boolean))];
