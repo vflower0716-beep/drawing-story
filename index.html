@@ -62,7 +62,7 @@ input.code4{width:7.5em;font-size:1.6rem;letter-spacing:.2em;text-align:center}
 .hnote{position:absolute;left:50%;transform:translateX(-50%);width:max-content;max-width:calc(100% - 24px);bottom:10px;text-align:center;font-size:12px;line-height:1.5;color:#fff;background:rgba(43,43,43,.72);border-radius:12px;padding:4px 12px}
 .ban{background:#FFF4C8;border:3px solid var(--fg);border-radius:14px;padding:8px 16px;font-weight:900;font-size:1.15rem;margin:8px 0}
 .qr svg{width:min(260px,60vw);height:auto;display:block;border:3px solid var(--fg);border-radius:12px}
-.kiosk header.top{display:none}.kiosk main{max-width:none;padding:24px 32px}
+.kiosk header.top,.home header.top{display:none}.home .hbg{top:0}.kiosk main{max-width:none;padding:24px 32px}
 .kiosk .ttl{font-size:2.2rem}.kiosk .cmp{grid-template-columns:repeat(2,1fr)}
 .fade{animation:f .6s}@keyframes f{from{opacity:0}to{opacity:1}}
 .stp{display:flex;gap:6px;margin:0 0 10px;flex-wrap:wrap}
@@ -86,6 +86,19 @@ input.code4{width:7.5em;font-size:1.6rem;letter-spacing:.2em;text-align:center}
 .lnk{background:none;border:0;font:inherit;color:#2F5CC4;text-decoration:underline;cursor:pointer;padding:10px 6px;min-height:44px}
 .hand{border-radius:22px;padding:26px;color:#fff;text-align:center;margin:12px 0}
 .hand .x{font-size:clamp(1.8rem,5vw,3rem);font-weight:900;line-height:1.35}
+.lg{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px;margin:12px 0}
+.lc{background:#fff;border:2px solid var(--fg);border-radius:14px;overflow:hidden;cursor:pointer;text-align:left;padding:0;font:inherit;color:inherit;display:block;width:100%}
+.lc .im{position:relative;display:block}.lc img.r{width:100%;display:block;aspect-ratio:4/3;object-fit:cover}
+.lc img.p{position:absolute;left:8px;bottom:8px;width:30%;aspect-ratio:4/3;object-fit:cover;border:2px solid #fff;border-radius:6px;box-shadow:0 1px 6px rgba(0,0,0,.45)}
+.lc .tx{display:block;padding:10px 12px}.lc .tt2{font-size:1.15rem;font-weight:900;line-height:1.4}
+.lq{font-size:.95rem;line-height:1.5;margin-top:6px;padding:6px 10px;background:#FFF4C8;border-radius:10px}
+.qts{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px;margin:8px 0 18px}
+.qt{border-radius:16px;padding:14px 18px;color:#fff;font-weight:900;font-size:1.25rem;line-height:1.5}.qt small{display:block;font-weight:700;font-size:.85rem;margin-top:6px}
+.md{position:fixed;inset:0;z-index:30;background:rgba(43,43,43,.82);overflow:auto;padding:14px;display:flex;justify-content:center;align-items:flex-start}
+.mc{background:var(--bg);border:3px solid var(--fg);border-radius:18px;padding:14px 16px 18px;max-width:920px;width:100%}
+.cb{position:relative;width:fit-content;max-width:100%;margin:8px auto;border:2px solid var(--fg);background:#fff;line-height:0}
+.cb img.ph{display:block;max-width:100%;max-height:60vh}.cb img.rs,.cb canvas{position:absolute;left:0;top:0;width:100%;height:100%}
+.cb .ln{position:absolute;top:0;bottom:0;width:3px;background:#fff;box-shadow:0 0 0 1px var(--fg);pointer-events:none}
 .qr svg{background:#fff}
 .baton{position:fixed;left:0;right:0;bottom:0;top:53px;z-index:5;display:flex;flex-direction:column;padding:12px 16px;overflow:auto}
 .bi{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;color:#fff;gap:8px}
@@ -2425,7 +2438,7 @@ const row={artwork_id:id,parent_id:null,root_id:id,participant_id:pid,generation
 await ins("artworks",row);return row}
 async function newCode(){let c;for(let i=0;i<8;i++){c=String(Math.floor(Math.random()*10000)).padStart(4,"0");const ex=await sel(`artworks?code=eq.${c}&created_at=gte.${since()}&select=artwork_id&limit=1`);if(!ex.length)break}return c}
 
-async function route(){stopAll();const p=location.hash.split("/"),k=p[1]||"",arg=p[2];document.body.className=k=="show"?"kiosk":"";window.scrollTo(0,0);
+async function route(){stopAll();const p=location.hash.split("/"),k=p[1]||"",arg=p[2];document.body.className=k=="show"?"kiosk":(["send","play","log"].includes(k)?"":"home");window.scrollTo(0,0);
 try{if(!SB_URL||!SB_KEY)throw Error("script内のSB_URLとSB_KEYを設定してください");await({send,play,log,show}[k]||home)(arg)}
 catch(e){app.innerHTML=`<h1>開けませんでした</h1><p class="m">${esc(e.message)}</p><p><a href="#/">最初の画面へ</a></p>`}}
 addEventListener("hashchange",route);route();
@@ -2548,7 +2561,7 @@ if(i>0)$("#sk").onclick=()=>{S.photos=S.photos.slice(0,i);revealWork(0)}}
 // ── 見せ合い ──
 function revealWork(i){stopAll();const n=S.R.length,P=S.photos[i],r=S.R[i],N=nm(i);let s=1;
 const zoom=src=>{const d=document.createElement("div");d.style.cssText="position:fixed;inset:0;z-index:20;background:rgba(0,0,0,.88);display:flex;align-items:center;justify-content:center;padding:12px";d.innerHTML=`<img src="${src}" style="max-width:100%;max-height:100%;background:#fff" alt="">`;d.onclick=()=>d.remove();document.body.appendChild(d)};
-const tag=`<div style="margin:6px 0">${n>1?`<b>${i+1}/${n}　</b>`:""}${pill("撮った人",N.oc)} <span class="m">の写真に、</span>${pill("描いた人",N.dc)} <span class="m">が描き足しました</span></div>`;
+const tag=`<div style="margin:6px 0">${n>1?`<b>${i+1}/${n}　</b>`:""}${pill(N.o,N.oc)} <span class="m">の写真に、</span>${pill(N.d,N.dc)} <span class="m">が描きました</span></div>`;
 const both=`<div class="cmp"><figure><img src="${pub(P.artwork_image_path)}" alt=""><figcaption>撮った写真</figcaption></figure><figure><img src="${r.src}" alt=""><figcaption>描き足した絵</figcaption></figure></div>`;
 const bt=`style="width:100%;background:${N.oc};border-color:${N.oc}"`;
 const view=()=>{stopAll();later(()=>{commitAll(false).catch(()=>{}).finally(finale)},720000);
@@ -2580,16 +2593,42 @@ try{try{await ins("pairs",memo?{...row,memo}:row)}catch(e){if(memo)await ins("pa
 function finale(){stopAll();app.innerHTML=`<h1>ありがとうございました</h1><p class="big">ふたりの見方が、1つずつ増えました。</p><div class="row"><a class="btn" href="#/log">みんなの作品を見る</a><button class="btn p" id="nw">つぎのふたりへ</button></div>`;$("#nw").onclick=()=>safe(intro);later(()=>$("#nw")&&$("#nw").click(),30000)}
 return safe(intro)}
 
+
 // ───────── ログ ─────────
-async function pairsData(){const P=await sel(`pairs?consent=eq.true&select=*&order=created_at.desc&limit=30`);const ids=[...new Set(P.flatMap(p=>[p.photo_a,p.photo_b,p.result_1,p.result_2]).filter(Boolean))];
-const A={};if(ids.length)(await sel(`artworks?artwork_id=in.(${ids.join(",")})&select=artwork_id,artwork_image_path,title`)).forEach(a=>A[a.artwork_id]=a);return{P,A}}
-const fig=(A,ph,rs)=>{const p=A[ph],r=A[rs];if(!p||!r)return"";return`<figure style="margin:0"><img class="tg" src="${pub(r.artwork_image_path)}" data-a="${pub(r.artwork_image_path)}" data-b="${pub(p.artwork_image_path)}" style="width:100%;border:2px solid #2B2B2B;display:block" alt=""><div class="ttl" style="font-size:1.2rem">「${esc(r.title)}」</div></figure>`};
-const works=({P,A})=>P.flatMap(p=>[[p.photo_a,p.result_1],[p.photo_b,p.result_2]]).filter(([a,b])=>a&&b).map(([a,b])=>fig(A,a,b)).filter(Boolean);
-async function log(){const W=works(await pairsData());
-app.innerHTML=`<h1>みんなのログ</h1><p class="m">載せてもいいと答えた作品です。絵をタップすると元の写真に切り替わります。順位や「いいね」はありません。</p>${W.length?`<div class="pair">${W.map(f=>`<div class="card">${f}</div>`).join("")}</div>`:'<div class="card">まだ作品がありません。</div>'}`;
-$$(".tg").forEach(i=>i.onclick=()=>{i.src=i.src==i.dataset.a?i.dataset.b:i.dataset.a})}
+const THN={food:"食べ物",place:"場所",view:"風景",any:"なんでも"};
+async function pairsData(){const P=await sel(`pairs?consent=eq.true&select=*&order=created_at.desc&limit=100`);const ids=[...new Set(P.flatMap(p=>[p.photo_a,p.photo_b,p.result_1,p.result_2]).filter(Boolean))];
+const A={};for(let i=0;i<ids.length;i+=40)(await sel(`artworks?artwork_id=in.(${ids.slice(i,i+40).join(",")})&select=artwork_id,artwork_image_path,title,theme,drawing_time`)).forEach(a=>A[a.artwork_id]=a);return{P,A}}
+const memoOf=(m,k)=>{if(!m)return"";const l=m.split("\n").find(x=>x.startsWith((k+1)+": "));return l?l.slice(3):""};
+const works=({P,A})=>P.flatMap(p=>[[p.photo_a,p.result_1,0],[p.photo_b,p.result_2,1]].map(([a,b,k])=>({p,a:A[a],r:A[b],k,memo:memoOf(p.memo,k),at:p.created_at}))).filter(w=>w.a&&w.r);
+const dstr=t=>{try{return new Date(t).toLocaleDateString("ja-JP",{month:"numeric",day:"numeric"})}catch{return""}};
+function openWork(w){const d=document.createElement("div");d.className="md";let raf=0;
+d.innerHTML=`<div class="mc"><div class="row" style="justify-content:space-between;margin:0"><span class="m">${esc(THN[w.r.theme]||"")}　${dstr(w.at)}</span><button class="btn" id="cl">閉じる ✕</button></div>
+<div class="cb" id="cb"><img class="ph" src="${pub(w.a.artwork_image_path)}" alt="撮った写真"><img class="rs" id="rs" src="${pub(w.r.artwork_image_path)}" alt="描き足した絵"><div class="ln" id="ln"></div></div>
+<input type="range" id="sl" min="0" max="100" value="50" style="width:100%" aria-label="写真と絵を見比べる"><div class="row" style="justify-content:space-between;margin:0"><b>◀ 撮った写真</b><b>描き足した絵 ▶</b></div>
+<div class="row"><button class="btn" id="rp" style="background:#D9432A;border-color:#D9432A;color:#fff">描いた過程を見る ▶</button><span id="rm" class="m"></span></div>
+<div class="m">描いた人がつけた題</div><div class="ttl" style="margin:0">「${esc(w.r.title)}」</div>${w.memo?`<div class="lq">出てきた一言：「${esc(w.memo)}」</div>`:""}</div>`;
+document.body.appendChild(d);const rs=d.querySelector("#rs"),ln=d.querySelector("#ln"),sl=d.querySelector("#sl"),rp=d.querySelector("#rp"),rm=d.querySelector("#rm"),set=()=>{rs.style.clipPath=`inset(0 0 0 ${sl.value}%)`;ln.style.left=`calc(${sl.value}% - 1px)`};sl.oninput=set;set();
+const close=()=>{d.remove();cancelAnimationFrame(raf)};d.querySelector("#cl").onclick=close;d.onclick=e=>{if(e.target===d)close()};
+rp.onclick=async()=>{rp.disabled=true;rm.textContent="読み込み中…";
+try{const r=(await sel(`artworks?artwork_id=eq.${w.r.artwork_id}&select=strokes`))[0],K=r&&r.strokes;if(!K||!K.length){rm.textContent="この作品には、過程の記録がありません";rp.disabled=false;return}
+const ph=d.querySelector(".ph"),c=document.createElement("canvas");c.width=ph.naturalWidth;c.height=ph.naturalHeight;d.querySelector("#cb").appendChild(c);const x=c.getContext("2d");
+rs.style.visibility="hidden";ln.style.visibility="hidden";sl.disabled=true;rm.textContent="";
+const T=Math.max(...K.map(s=>s.p[s.p.length-1][2]),1),f=Math.max(1,T/12000),st=performance.now();
+const draw=()=>{const now=(performance.now()-st)*f;x.clearRect(0,0,c.width,c.height);for(const s of K){const pts=s.p.filter(q=>q[2]<=now);if(!pts.length)continue;x.globalCompositeOperation=s.e?"destination-out":"source-over";x.strokeStyle=s.c;x.lineWidth=s.w;x.lineCap=x.lineJoin="round";x.beginPath();pts.forEach(([a,bb],j)=>j?x.lineTo(a,bb):x.moveTo(a,bb));if(pts.length<2)x.lineTo(pts[0][0]+.1,pts[0][1]);x.stroke()}
+if(now<T+600)raf=requestAnimationFrame(draw);else{c.remove();rs.style.visibility="";ln.style.visibility="";sl.disabled=false;rp.disabled=false;rp.textContent="もう一度見る ▶"}};raf=requestAnimationFrame(draw)}
+catch(e){rm.textContent=e.message;rp.disabled=false}}}
+const card=(w,i)=>`<button class="lc" data-i="${i}"><span class="im"><img class="r" src="${pub(w.r.artwork_image_path)}" alt=""><img class="p" src="${pub(w.a.artwork_image_path)}" alt=""></span><span class="tx"><span class="tt2" style="display:block">「${esc(w.r.title)}」</span><span class="m">${esc(THN[w.r.theme]||"")}　${dstr(w.at)}</span>${w.memo?`<span class="lq" style="display:block">「${esc(w.memo)}」</span>`:""}</span></button>`;
+async function log(){const D=await pairsData(),W=works(D);let th="all";
+const qs=W.filter(w=>w.memo).slice(0,6);
+const view=()=>{const L=W.map((w,i)=>[w,i]).filter(([w])=>th=="all"||w.r.theme==th),tl=[...new Set(W.map(w=>w.r.theme).filter(Boolean))];
+app.innerHTML=`<h1>みんなのログ</h1><p class="m" style="margin:0">ふたりの「見方」の記録です。カードをタップすると、写真と絵の見比べや、描いた過程が見られます。順位や「いいね」はありません。</p>
+<p class="m"><b>${W.length}</b>作品　／　<b>${D.P.length}</b>組（載せてもいいと答えた作品だけ）</p>
+${qs.length?`<h2>会話から出てきた一言</h2><div class="qts">${qs.map((w,i)=>`<div class="qt" style="background:${COL[i%2].c}">「${esc(w.memo)}」<small>絵の題：「${esc(w.r.title)}」</small></div>`).join("")}</div>`:""}
+${W.length?`<div class="chips"><button class="chip${th=="all"?" on":""}" data-t="all">すべて</button>${tl.map(t=>`<button class="chip${th==t?" on":""}" data-t="${t}">${esc(THN[t]||t)}</button>`).join("")}</div><div class="lg">${L.map(([w,i])=>card(w,i)).join("")}</div>`:'<div class="card">まだ作品がありません。</div>'}`;
+$$("[data-t]").forEach(b=>b.onclick=()=>{th=b.dataset.t;view()});$$(".lc").forEach(b=>b.onclick=()=>openWork(W[+b.dataset.i]))};view()}
 async function show(){let W=works(await pairsData()),k=0;
+const fg=w=>`<figure style="margin:0"><img src="${pub(w.r.artwork_image_path)}" style="width:100%;border:2px solid #2B2B2B;display:block" alt=""><div class="ttl">「${esc(w.r.title)}」</div>${w.memo?`<div class="lq">「${esc(w.memo)}」</div>`:""}</figure>`;
 const frame=()=>{if(!W.length){app.innerHTML=`<h1 style="text-align:center">ミカタス</h1><p class="big" style="text-align:center">まだ作品がありません。ふたりで描くと、ここに並びます。</p>`;return}
-const a=W[k++%W.length],b=W[k++%W.length];app.innerHTML=`<div class="fade"><div class="cmp">${a===b?a:a+b}</div></div>`};
+const a=W[k++%W.length],b=W[k++%W.length];app.innerHTML=`<div class="fade"><div class="cmp">${a===b?fg(a):fg(a)+fg(b)}</div></div>`};
 frame();every(frame,10000);every(async()=>{try{W=works(await pairsData())}catch{}},60000)}
 </script></body></html>
